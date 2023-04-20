@@ -2,7 +2,7 @@ from elasticsearch import Elasticsearch
 
 # Connect to Elasticsearch instance
 es_instance = Elasticsearch('http://localhost:9200')
-term = "zombie"
+term = "zombie attack"
 # Define query
 query = {
 	"query": {
@@ -13,7 +13,9 @@ query = {
 }
 
 # Execute query
-results = es_instance.search(index='engine', query=query['query'], min_score=0, size=1000)
+results = es_instance.search(index='engine', query=query['query'], min_score=0, size=1000, explain=True)
+# results = es_instance.kNNsearch(index='engine', query=query['query'], min_score=0, size=1000)
+
 
 # Extract document names from results
 document_names = [hit['_source']['filename'] for hit in results['hits']['hits']]

@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from elasticsearch import Elasticsearch
 
-ELASTIC_PASSWORD = "DLrSyMSNlFb5kxl0Qg_f"
 es_instance = Elasticsearch('http://localhost:9200')
 
 app = Flask(__name__, template_folder='./template_folder')

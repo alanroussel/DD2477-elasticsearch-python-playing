@@ -28,7 +28,6 @@ for filename in tqdm(files_to_read):
         # Read the content of the file
         with open(file_path, 'r') as f:
             content = f.read()
-            a = 2
 
         # Define the document to be indexed
         doc = {
