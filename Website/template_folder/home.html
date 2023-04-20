@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Home</title>
+  </head>
+  <body>
+    <div class="text-end">
+      <a href="{{ url_for('home', logout=1) }}" onclick="return confirm('Are you sure you want to log out?');">Log out</a>
+    </div>
+    <h1>Search Engine</h1>
+    <form method="post">
+      <div>
+        <label for="search">Search:</label>
+        <input type="text" id="search" name="search" required>
+        <button type="submit">Search</button>
+      </div>
+    </form>
+    {% if document_names %}
+      <h2>Search Results for "{{ search_query }}"</h2>
+      <ul>
+        {% for document_name in document_names %}
+          <li><a href="{{ url_for('document', filename=document_name) }}">{{ document_name }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </body>
+</html>

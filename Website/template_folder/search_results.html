@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Search Results</title>
+  </head>
+  <body>
+    <h1>Search Results for "{{ search_query }}"</h1>
+    {% if document_names %}
+    <ul>
+      {% for document_name in document_names %}
+      <li><a href="{{ url_for('document', filename=document_name) }}">{{ document_name }}</a>
+      </li>
+      
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>No results found.</p>
+    {% endif %}
+  </body>
+</html>
