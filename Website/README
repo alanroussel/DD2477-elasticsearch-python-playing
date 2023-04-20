@@ -1,0 +1,21 @@
+* Steps to get the server working:
+
+1. Go to 'server.py' and replace the password that is there with your own elastic search password that was generated when you set up elastic search.
+
+2. Go to the 'elasticsearch'-container in Docker Desktop. 
+
+3. Go to files and then /usr/share/elasticsearch/config/certs and copy the file 'http_ca.crt'.
+
+4. Put the file in the 'Website'-directory (same directory as 'server.py'). 
+
+5. Replace the the path of the 'ca_certs'-parameter in line 5 with the path to the 'http_ca.crt'-file. 
+
+6. Replace the path to the 'template_folder'-parameter in line 6 with the path to the template folder in the 'Website'-directory. 
+
+7. Replace 'my_index' in line 10 with the name of the index in elasticsearch. NOTE: All this assume that you have indexed davisWiki already. 
+
+8. Run 'server.py'. 
+
+9. Go to http://localhost:5000
+
+10. Done. 
