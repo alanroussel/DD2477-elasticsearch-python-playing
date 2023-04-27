@@ -1,21 +1,55 @@
-<!doctype html>
+<!-- <!doctype html>
 <html>
   <head>
     <title>Search Results</title>
   </head>
   <body>
     <h1>Search Results for "{{ search_query }}"</h1>
-    {% if hits %}
-    <ul>
-      {% for hit in hits %}
-      <li><p> <a href="{{ url_for('document', filename=hit['_source']['filename'], content=hit['_source']['content']) }}">{{ hit['_source']['filename'] }}</a> -- {{hit['_score']}}  </p>
-      </li>
-      
+    {% if document_names %}
+    <table>
+      <tr>
+        <th>Document Name</th>
+        <th>Time Spent (seconds)</th>
+      </tr>
+      {% for document_name in document_names %}
+      <tr>
+        <td><a href="{{ url_for('document', filename=document_name) }}">{{ document_name }}</a></td>
+        {% if document_name in user_click_data %}
+        <td>{{ user_click_data[document_name] }}</td>
+        {% else %}
+        <td>0</td>
+        {% endif %}
+      </tr>
       {% endfor %}
-    </ul>
+    </table>
+    {% else %}
+    <p>No results found.</p>
+    {% endif %}
+  </body>
+</html> -->
+
+<!doctype html>
+<html>
+  <head>
+    <title>Search Results for "{{ search_query }}"</title>
+  </head>
+  <body>
+    <h1>Search Results for "{{ search_query }}"</h1>
+    {% if document_names %}
+    <table>
+      <tr>
+        <th>Document Name</th>
+        <th>Score</th>
+      </tr>
+      {% for hit in results %}
+      <tr>
+        <td><a href="{{ url_for('document', filename=hit._source.filename) }}">{{ hit._source.filename }}</a></td>
+        <td>{{ hit._score }}</td>
+      </tr>
+      {% endfor %}
+    </table>
     {% else %}
     <p>No results found.</p>
     {% endif %}
   </body>
 </html>
-
