@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>User Profile</title>
+</head>
+<body onload="refresh()">
+	<h1>Hi {{ username }}! This is your profile:</h1>
+	<div>
+		<h3>Favorite Sport:</h3>
+		<p>{{ favorite_sport }}</p>
+	</div>
+	<div>
+		<h3>Favorite Subject:</h3>
+		<p>{{ favorite_subject }}</p>
+	</div>
+	<div>
+		<h3>Hobby:</h3>
+		<p>{{ hobby }}</p>
+	</div>
+    <form action="/edit_profile" method="get">
+        <button type="submit">Edit Profile</button>
+      </form>
+</body>
+
+</html>

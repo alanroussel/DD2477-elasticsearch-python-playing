@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Edit Profile</title>
+  </head>
+  <body>
+    <h1>Edit Profile</h1>
+    <form method="post" action="{{ url_for('save_profile') }}">
+      <div>
+        <label for="favorite_sport">Favorite Sport:</label>
+        <input type="text" id="favorite_sport" name="favorite_sport" value="" required>
+      </div>
+      <div>
+        <label for="favorite_subject">Favorite Subject:</label>
+        <input type="text" id="favorite_subject" name="favorite_subject" value="" required>
+      </div>
+      <div>
+        <label for="hobby">Hobby:</label>
+        <input type="text" id="hobby" name="hobby" value="" required>
+      </div>
+      <div>
+        <button type="submit">Save Profile</button>
+      </div>
+    </form>
+  </body>
+</html>

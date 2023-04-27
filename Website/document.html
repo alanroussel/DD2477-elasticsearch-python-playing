@@ -1,0 +1,70 @@
+<<<<<<< HEAD
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ filename }}</title>
+  </head>
+  <body>
+    <h1>{{ filename }}</h1>
+    <pre>{{ content }}</pre>
+    <a href="{{ url_for('home') }}">Back to search results</a>
+    
+
+
+  </body>
+  <script>
+    var startTime = Date.now();
+    var filename = "{{ filename }}";
+    
+    
+    window.onbeforeunload = function() {
+      var endTime = Date.now();
+      var duration = endTime - startTime;
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "/update_click_info", true);
+      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhr.send("filename=" + filename + "&duration=" + duration);
+      xhr.send("filename=" + filename + "&duration=" + duration + "&query=" + query);
+
+    };
+  </script>
+  
+</html> -->
+
+=======
+>>>>>>> f2ae8bbbf42082922a5f59869e803e722c2bd7f0
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ filename }}</title>
+  </head>
+  <body>
+    <h1>{{ filename }}</h1>
+    <pre>{{ content }}</pre>
+<<<<<<< HEAD
+    <a href="{{ url_for('home') }}">Back to search results</a>
+    
+
+
+  </body>
+  <script>
+    var startTime = Date.now();
+    var filename = "{{ filename }}";
+    
+    
+    window.onbeforeunload = function() {
+      var endTime = Date.now();
+      var duration = endTime - startTime;
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "/update_user_data", true);
+      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhr.send("filename=" + filename + "&duration=" + duration);
+      xhr.send("filename=" + filename + "&duration=" + duration);
+
+    };
+  </script>
+  
+=======
+  </body>
+>>>>>>> f2ae8bbbf42082922a5f59869e803e722c2bd7f0
+</html>
