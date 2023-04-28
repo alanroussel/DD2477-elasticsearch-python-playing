@@ -14,7 +14,8 @@ app = Flask(__name__, template_folder='./Website/template_folder')
 
 USERNAME = "admin"
 PASSWORD = "admin"
-INDEX_NAME = "engine"
+INDEX_ENGINE_NAME = "engine"
+INDEX_PROFILES_NAME = "user_profiles"
 
 USERNAMES = ["admin", "user1", "user2"]
 PASSWORDS = dict()
@@ -28,6 +29,7 @@ curr_query = ""
 app.secret_key = 'supersecretkey'
 
 
+## USER INDEX
 def create_user_index(username):
     # create index with user's name
     index_name = f"{username}_index"
@@ -42,6 +44,8 @@ def create_user_index(username):
     es_instance.indices.create(index=index_name, body=body)
     return index_name
 
+
+## PROFILE 
 def create_profile_index():
     mapping = {
         "mappings": {
@@ -54,7 +58,22 @@ def create_profile_index():
         }
     }
 
-    es_instance.indices.create(index="user_profiles", body=mapping)
+    es_instance.indices.create(index=INDEX_PROFILES_NAME, body=mapping)
+
+def get_profile(username):
+    profile_query = {
+            "query": {
+                "match": {
+                    "profile_ID": username
+                }
+            }
+        }
+
+    # Execute query
+    res = es_instance.search(index=INDEX_PROFILES_NAME, query=profile_query['query'],size=1000)
+    return res
+
+
 
 def get_user_index_name(username):
     """
@@ -72,7 +91,7 @@ def login():
         if request.form['username'] in USERNAMES and request.form['password'] == PASSWORDS[request.form['username']]:
             session['username'] = request.form['username']
             # create_user_index(session['username'])
-            if not es_instance.indices.exists(index="user_profiles"):
+            if not es_instance.indices.exists(index=INDEX_PROFILES_NAME):
                 create_profile_index()
             return redirect(url_for('home'))
         else:
@@ -92,6 +111,7 @@ def home():
     if not es_instance.indices.exists(index=user_index_name):
         create_user_index(session['username'])
 
+    get_profile(session['username'])
     # User has entered a search query
     if request.method == 'POST':
         # Get search query from user
@@ -110,7 +130,7 @@ def home():
         }
 
         # Execute query
-        results_from_engine_index = es_instance.search(index=INDEX_NAME, query=query_from_user_in_search_engine['query'],size=1000) 
+        results_from_engine_index = es_instance.search(index=INDEX_ENGINE_NAME, query=query_from_user_in_search_engine['query'],size=1000) 
         #size parameter is the number of documents we want to retrieve, by default it's 10
         document_names = [hit['_source']['filename'] for hit in results_from_engine_index['hits']['hits']]
 
@@ -160,7 +180,7 @@ def edit_profile():
 @app.route('/profile/<username>')
 def profile(username):
     # Get user profile from Elasticsearch index
-    res = es_instance.search(index="user_profiles", body={"query": {"match": {"profile_ID": username}}})
+    res = get_profile(username)
     #print(res)
     if res['hits']['total']['value'] > 0:
         profile = res['hits']['hits'][0]['_source']
@@ -182,7 +202,7 @@ def save_profile():
     favorite_subject = request.form['favorite_subject']
     hobby = request.form['hobby']
 
-    res = es_instance.search(index="user_profiles", body={"query": {"match": {"profile_ID": session['username']}}})
+    res = get_profile(session['username'])
 
     new_profile = {
             "profile_ID": session['username'],
@@ -199,7 +219,7 @@ def save_profile():
             "favorite_subject": favorite_subject,
             "hobby": hobby
         }
-        es_instance.index(index="user_profiles", body=new_profile)
+        es_instance.index(index=INDEX_PROFILES_NAME, body=new_profile)
 
     else:
         body = {
@@ -208,7 +228,7 @@ def save_profile():
             "hobby": hobby
         }
         es_instance.update(index='user_profiles', id=res["hits"]["hits"][0]["_id"], body={"doc": body})
-    res = es_instance.search(index="user_profiles", body={"query": {"match": {"profile_ID": session['username']}}})
+    res = es_instance.search(index=INDEX_PROFILES_NAME, body={"query": {"match": {"profile_ID": session['username']}}})
     print(res)
     # Redirect to the user's profile page
     return redirect(url_for('profile', username=session['username']))
@@ -225,7 +245,7 @@ def document(filename):
     }
 
     # Execute query
-    results = es_instance.search(index=INDEX_NAME, query=query_by_title['query'], min_score=0, size=1000)
+    results = es_instance.search(index=INDEX_ENGINE_NAME, query=query_by_title['query'], min_score=0, size=1000)
 
     # Extract content from results
     content = results["hits"]["hits"][0]['_source']['content']
