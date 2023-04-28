@@ -1,6 +1,8 @@
 import datetime
 import random
 import time
+import numpy as np
+
 from flask import Flask, render_template, request, redirect, url_for, session
 from elasticsearch import Elasticsearch
 from elasticsearch import NotFoundError
@@ -12,7 +14,7 @@ app = Flask(__name__, template_folder='./Website/template_folder')
 
 USERNAME = "admin"
 PASSWORD = "admin"
-INDEX_NAME = "my_index"
+INDEX_NAME = "engine"
 
 USERNAMES = ["admin", "user1", "user2"]
 PASSWORDS = dict()
@@ -96,9 +98,10 @@ def home():
         search_query = request.form['search']
         global curr_query
         curr_query = search_query
+        
 
         # Define query for Elasticsearch
-        query = {
+        query_from_user_in_search_engine = {
             "query": {
                 "match": {
                     "content": search_query
@@ -107,11 +110,12 @@ def home():
         }
 
         # Execute query
-        results = es_instance.search(index=INDEX_NAME, query=query['query'], min_score=0, size=1000)
-        document_names = [hit['_source']['filename'] for hit in results['hits']['hits']]
+        results_from_engine_index = es_instance.search(index=INDEX_NAME, query=query_from_user_in_search_engine['query'],size=1000) 
+        #size parameter is the number of documents we want to retrieve, by default it's 10
+        document_names = [hit['_source']['filename'] for hit in results_from_engine_index['hits']['hits']]
 
 
-        query2 = {
+        query_from_user_in_past_queries = {
             "query": {
                 "match": {
                     "query": search_query
@@ -119,13 +123,15 @@ def home():
             }
         }
 
-        user_data_results = es_instance.search(index=user_index_name, body=query2)
+        results_from_user_past_queries = es_instance.search(index=user_index_name, query=query_from_user_in_past_queries["query"])
         
-        results_with_boost = results['hits']['hits']
-        if user_data_results['hits']['total']['value'] > 0:
-            hit = user_data_results['hits']['hits'][0]['_source']
+        print(results_from_user_past_queries['hits']['hits'])
+        
+        results_with_boost = results_from_engine_index['hits']['hits']
+        if results_from_user_past_queries['hits']['total']['value'] > 0:
+            hit = results_from_user_past_queries['hits']['hits'][0]['_source']
 
-            doc_counts = user_data_results['hits']['hits'][0]['_source']['doc_counts']
+            doc_counts = results_from_user_past_queries['hits']['hits'][0]['_source']['doc_counts']
 
             # results_with_boost = results['hits']['hits']
             for result in results_with_boost:
