@@ -60,7 +60,11 @@ def create_profile_index():
 
     es_instance.indices.create(index=INDEX_PROFILES_NAME, body=mapping)
 
+
 def get_profile(username):
+    '''
+    returns: object of the mapping of INDEX_PROFILES_NAME
+    '''
     profile_query = {
             "query": {
                 "match": {
@@ -70,7 +74,8 @@ def get_profile(username):
         }
 
     # Execute query
-    res = es_instance.search(index=INDEX_PROFILES_NAME, query=profile_query['query'],size=1000)
+    
+    res = es_instance.search(index=INDEX_PROFILES_NAME, query=profile_query['query'])
     return res
 
 
@@ -84,8 +89,27 @@ def get_user_index_name(username):
 def get_boost(count):
     return np.log(count+1) * 10
 
+
+def get_documents_from_profile(profile):
+    query = {
+            "query": {
+                "match": {
+                    "content": profile['favorite_sport'] + " " + profile['favorite_subject'] + " " + profile['hobby']
+                }
+            }
+        }
+
+        # Execute query
+    res = es_instance.search(index=INDEX_ENGINE_NAME, query=query['query'],size=100) #only keep 100
+    # filenames = [hit['_source']['filename'] for hit in res['hits']['hits']]
+    # print(filenames)
+    # print(len(filenames))
+    return res
+
+
 @app.route('/', methods=['GET', 'POST'])
 def login():
+    print(session['username'])
     if request.method == 'POST':
         # Check credentials and redirect to home page if successful
         if request.form['username'] in USERNAMES and request.form['password'] == PASSWORDS[request.form['username']]:
@@ -111,7 +135,10 @@ def home():
     if not es_instance.indices.exists(index=user_index_name):
         create_user_index(session['username'])
 
-    get_profile(session['username'])
+    profile = get_profile(session['username'])
+    print("-------")
+    results_from_profile = get_documents_from_profile(profile['hits']['hits'][0]['_source'])
+    print("-------")
     # User has entered a search query
     if request.method == 'POST':
         # Get search query from user
