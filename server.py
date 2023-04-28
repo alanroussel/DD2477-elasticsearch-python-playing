@@ -23,6 +23,7 @@ PASSWORDS["admin"] = "admin"
 PASSWORDS["user1"] = "pass1"
 PASSWORDS["user2"] = "pass2"
 
+
 # Global variable to keep track of the latest query entered by the user
 curr_query = ""
 
@@ -87,7 +88,7 @@ def get_user_index_name(username):
     return f"{username}_index"
 
 def get_boost(count):
-    return np.log(count+1) * 10
+    return np.log(count+1) * 10 # maybe change 
 
 
 def get_documents_from_profile(profile):
@@ -100,11 +101,21 @@ def get_documents_from_profile(profile):
         }
 
         # Execute query
+
+    profile_results_map = dict()
     res = es_instance.search(index=INDEX_ENGINE_NAME, query=query['query'],size=100) #only keep 100
-    # filenames = [hit['_source']['filename'] for hit in res['hits']['hits']]
-    # print(filenames)
-    # print(len(filenames))
-    return res
+    
+    #print(res['hits']['hits'][0])
+    # print("===================")
+    # print(res['hits']['hits'][1]['_score'])
+
+    for hit in res['hits']['hits']:
+        
+        filename = hit['_source']['filename']
+        score = hit['_score']
+        profile_results_map[filename] = score
+
+    return profile_results_map
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -136,11 +147,12 @@ def home():
         create_user_index(session['username'])
 
     profile = get_profile(session['username'])
-    print("-------")
-    results_from_profile = get_documents_from_profile(profile['hits']['hits'][0]['_source'])
-    print("-------")
+    #print("-------")
+    #profile_results_map = get_documents_from_profile(profile['hits']['hits'][0]['_source'])
+    #print("-------")
     # User has entered a search query
     if request.method == 'POST':
+        profile_results_map = get_documents_from_profile(profile['hits']['hits'][0]['_source'])
         # Get search query from user
         search_query = request.form['search']
         global curr_query
@@ -172,7 +184,7 @@ def home():
 
         results_from_user_past_queries = es_instance.search(index=user_index_name, query=query_from_user_in_past_queries["query"])
         
-        print(results_from_user_past_queries['hits']['hits'])
+        #print(results_from_user_past_queries['hits']['hits'])
         
         results_with_boost = results_from_engine_index['hits']['hits']
         if results_from_user_past_queries['hits']['total']['value'] > 0:
@@ -188,6 +200,23 @@ def home():
                     result['_score'] += get_boost(doc_count)
             
             results_with_boost = sorted(results_with_boost, key=lambda x: x['_score'], reverse=True)
+        
+        # Boost scores of documents that are relevant according to the user's interests (profile)
+        final_results = []
+        for i, result in enumerate(results_with_boost):
+            
+            if i >= 100: # Only check for the top-100
+                break
+
+            filename = result['_source']['filename']
+            if filename in profile_results_map:
+                
+                result['_score'] += profile_results_map[filename]
+                
+            final_results.append(result)
+        
+        final_results = sorted(final_results, key=lambda x: x['_score'], reverse=True) # Not sure if this is necessary
+
         return render_template('search_results.html', search_query=search_query, document_names=document_names, results=results_with_boost)
 
     if 'logout' in request.args:
@@ -211,9 +240,9 @@ def profile(username):
     #print(res)
     if res['hits']['total']['value'] > 0:
         profile = res['hits']['hits'][0]['_source']
-        print("Profile found for ", session['username'])
+        
     else:
-        print("DID NOT FIND PROFILE")
+        
         profile = {'favorite_sport': '', 'favorite_subject': '', 'hobby': ''}
     
     # Render the HTML template with user profile data
