@@ -1,0 +1,9 @@
+- Steps to get the server working:
+
+1. Create a folder and put inside a config.json file { "password": "yourelasticpassword" } and the http_ca.crt. To find that certificate, go to the 'elasticsearch'-container in Docker Desktop, go to files and then /usr/share/elasticsearch/config/certs and copy the file 'http_ca.crt'. That folder should not be pushed in github.
+
+2. If not done yet, run index.py file in order to index the database.
+
+3. Run 'server.py'.
+
+4. Go to http://localhost:5000

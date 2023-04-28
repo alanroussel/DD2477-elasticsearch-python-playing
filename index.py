@@ -1,14 +1,12 @@
 from elasticsearch import Elasticsearch
 import os
-import json
 from tqdm import tqdm
-credentials_path = '../credentials/'
-with open(credentials_path + 'config.json', 'r') as f:
-    config = json.load(f)
-# Connect to ElasticSearch
 
-ELASTIC_PASSWORD = config["password"]
-es_instance = Elasticsearch('https://localhost:9200', ca_certs=credentials_path + "http_ca.crt", basic_auth=("elastic", ELASTIC_PASSWORD))
+from credentials import get_es_password_and_credentials_path
+
+password, ca_certs = get_es_password_and_credentials_path('./credentials')
+
+es_instance = Elasticsearch('https://localhost:9200', ca_certs=ca_certs + "http_ca.crt", basic_auth=("elastic", password))
 # Define the index and mapping
 INDEX_NAME = 'engine'
 mappings = {

@@ -4,11 +4,11 @@ import time
 from flask import Flask, render_template, request, redirect, url_for, session
 from elasticsearch import Elasticsearch
 from elasticsearch import NotFoundError
-import numpy as np
+from credentials import get_es_password_and_credentials_path
+password, ca_certs = get_es_password_and_credentials_path('./credentials/')
 
-ELASTIC_PASSWORD = "DLrSyMSNlFb5kxl0Qg_f"
-es_instance = Elasticsearch('https://localhost:9200', ca_certs="/Users/fredolsson/Desktop/KTH/MASTER/Search_Engines/DD2477-elasticsearch-python-playing/Website/http_ca.crt", basic_auth=("elastic", ELASTIC_PASSWORD))
-app = Flask(__name__, template_folder='/Users/fredolsson/Desktop/KTH/MASTER/Search_Engines/DD2477-elasticsearch-python-playing/Website/template_folder')
+es_instance = Elasticsearch('https://localhost:9200', ca_certs=ca_certs, basic_auth=("elastic", password))
+app = Flask(__name__, template_folder='./Website/template_folder')
 
 USERNAME = "admin"
 PASSWORD = "admin"
@@ -54,9 +54,6 @@ def create_profile_index():
 
     es_instance.indices.create(index="user_profiles", body=mapping)
 
-
-
-
 def get_user_index_name(username):
     """
     Returns the Elasticsearch index for the specified user.
@@ -65,8 +62,6 @@ def get_user_index_name(username):
 
 def get_boost(count):
     return np.log(count+1) * 10
-
-
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -212,7 +207,6 @@ def save_profile():
     # Redirect to the user's profile page
     return redirect(url_for('profile', username=session['username']))
     
-
 @app.route('/document/<filename>')
 def document(filename):
     # Define query for Elasticsearch
@@ -231,8 +225,6 @@ def document(filename):
     content = results["hits"]["hits"][0]['_source']['content']
     
     return render_template('document.html', filename=filename, content=content)
-
-
 
 @app.route("/update_user_data", methods=["POST"])
 def update_user_data():
