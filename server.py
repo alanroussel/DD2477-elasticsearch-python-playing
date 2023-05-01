@@ -29,9 +29,24 @@ curr_query = ""
 
 app.secret_key = 'supersecretkey'
 
+## ENGINE INDEX
+def search_documents_in_index(terms, size=1000):
+    """ search documents in engine index given string terms, such as 'zombie' or 'money transfer' """
+    query = {
+            "query": {
+                "match": {
+                    "content": terms
+                }
+            }
+        }
+    
+    res = es_instance.search(index=INDEX_ENGINE_NAME, query=query['query'],size=size) 
+    return res
 
-## USER INDEX
+
+## USER PERSONAL INDEX
 def create_user_index(username):
+    """ create a personal index for this user """
     # create index with user's name
     index_name = f"{username}_index"
     body = {
@@ -45,9 +60,28 @@ def create_user_index(username):
     es_instance.indices.create(index=index_name, body=body)
     return index_name
 
+def get_user_index_name(username):
+    """ Returns the Elasticsearch index for the specified user """
+    return f"{username}_index"
+
+def get_documents_from_past_queries(username, terms):
+    """ retrieve something from the personal index for this user ?"""
+    query = {
+            "query": {
+                "match": {
+                    "query": terms
+                }
+            }
+        }
+
+    results_from_user_past_queries = es_instance.search(index=get_user_index_name(username), query=query["query"])
+    return results_from_user_past_queries
+
 
 ## PROFILE 
 def create_profile_index():
+    """ create the index to index all the profiles 
+    returns void """
     mapping = {
         "mappings": {
             "properties": {
@@ -63,9 +97,8 @@ def create_profile_index():
 
 
 def get_profile(username):
-    '''
-    returns: object of the mapping of INDEX_PROFILES_NAME
-    '''
+    """ get profile (favorite sport, favorite subject & hobby) from this user 
+    return: object of INDEX_PROFILES_NAME's mapping """
     profile_query = {
             "query": {
                 "match": {
@@ -73,59 +106,43 @@ def get_profile(username):
                 }
             }
         }
-
-    # Execute query
     
     res = es_instance.search(index=INDEX_PROFILES_NAME, query=profile_query['query'])
     return res
 
 
-
-def get_user_index_name(username):
-    """
-    Returns the Elasticsearch index for the specified user.
-    """
-    return f"{username}_index"
-
-def get_boost(count):
-    return np.log(count+1) * 10 # maybe change 
-
-
 def get_documents_from_profile(profile):
-    query = {
-            "query": {
-                "match": {
-                    "content": profile['favorite_sport'] + " " + profile['favorite_subject'] + " " + profile['hobby']
-                }
-            }
-        }
+    """ retrieves documents given user's profile
+    return: hashmap filename->score containing the top 100 results retrieved """
 
-        # Execute query
-
-    profile_results_map = dict()
-    res = es_instance.search(index=INDEX_ENGINE_NAME, query=query['query'],size=100) #only keep 100
-    
-    #print(res['hits']['hits'][0])
-    # print("===================")
-    # print(res['hits']['hits'][1]['_score'])
+    terms_to_search = profile['favorite_sport'] + " " + profile['favorite_subject'] + " " + profile['hobby']
+    res = search_documents_in_index(terms_to_search, size=100) #only get top-100 results. why ?
+    profile_results_map = dict() # build a hashmap filename->score in order to alter the search engine score
 
     for hit in res['hits']['hits']:
-        
         filename = hit['_source']['filename']
         score = hit['_score']
         profile_results_map[filename] = score
 
     return profile_results_map
 
+## BOOST FUNCTION
+
+def get_boost(count):
+    """ computes a boost according to the number of time user visited a page ? """
+    return np.log(count+1) * 10 # maybe change 
+
+
+
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    print(session['username'])
     if request.method == 'POST':
         # Check credentials and redirect to home page if successful
         if request.form['username'] in USERNAMES and request.form['password'] == PASSWORDS[request.form['username']]:
             session['username'] = request.form['username']
             # create_user_index(session['username'])
+            # why is this line commented ? is it normal ?
             if not es_instance.indices.exists(index=INDEX_PROFILES_NAME):
                 create_profile_index()
             return redirect(url_for('home'))
@@ -136,55 +153,29 @@ def login():
 
 @app.route('/home', methods=['GET', 'POST'])
 def home():
-
-    
     if 'username' not in session:
         return redirect(url_for('login'))
 
     # Create index for user if it does not exist
-    user_index_name = get_user_index_name(session['username'])
-    if not es_instance.indices.exists(index=user_index_name):
+    if not es_instance.indices.exists(index=get_user_index_name(session['username'])):
         create_user_index(session['username'])
 
-    profile = get_profile(session['username'])
-    #print("-------")
-    #profile_results_map = get_documents_from_profile(profile['hits']['hits'][0]['_source'])
-    #print("-------")
-    # User has entered a search query
+    
     if request.method == 'POST':
+        profile = get_profile(session['username'])
         profile_results_map = get_documents_from_profile(profile['hits']['hits'][0]['_source'])
-        # Get search query from user
+        
         search_query = request.form['search']
-        global curr_query
+        global curr_query # i dont understand 
         curr_query = search_query
         
-
-        # Define query for Elasticsearch
-        query_from_user_in_search_engine = {
-            "query": {
-                "match": {
-                    "content": search_query
-                }
-            }
-        }
-
-        # Execute query
-        results_from_engine_index = es_instance.search(index=INDEX_ENGINE_NAME, query=query_from_user_in_search_engine['query'],size=1000) 
-        #size parameter is the number of documents we want to retrieve, by default it's 10
+        # get documents given the query of the user
+        results_from_engine_index = search_documents_in_index(search_query, size=1000) # get top 1000
         document_names = [hit['_source']['filename'] for hit in results_from_engine_index['hits']['hits']]
 
-
-        query_from_user_in_past_queries = {
-            "query": {
-                "match": {
-                    "query": search_query
-                }
-            }
-        }
-
-        results_from_user_past_queries = es_instance.search(index=user_index_name, query=query_from_user_in_past_queries["query"])
+        # get documents given the past queries of the user
+        results_from_user_past_queries = get_documents_from_past_queries(username=session['username'], terms=search_query)
         
-        #print(results_from_user_past_queries['hits']['hits'])
         
         results_with_boost = results_from_engine_index['hits']['hits']
         if results_from_user_past_queries['hits']['total']['value'] > 0:
