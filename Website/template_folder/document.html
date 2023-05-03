@@ -46,7 +46,10 @@
   <script>
     var startTime = Date.now();
     var filename = "{{ filename }}";
+
     
+
+
     
     window.onbeforeunload = function() {
       var endTime = Date.now();
@@ -55,7 +58,7 @@
       xhr.open("POST", "/update_user_data", true);
       xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       xhr.send("filename=" + filename + "&duration=" + duration);
-      xhr.send("filename=" + filename + "&duration=" + duration);
+      
 
     };
   </script>

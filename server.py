@@ -175,7 +175,6 @@ def home():
         
         # get documents given the past queries of the user
         results_from_user_past_queries = get_documents_from_past_queries(username=session['username'], terms=search_query)
-        print(results_from_user_past_queries)
         
         # get documents given the profile of the user 
         profile = get_profile(session['username'])
@@ -227,7 +226,6 @@ def edit_profile():
 def profile(username):
     # Get user profile from Elasticsearch index
     res = get_profile(username)
-    #print(res)
     if res['hits']['total']['value'] > 0:
         profile = res['hits']['hits'][0]['_source']
         
@@ -275,7 +273,6 @@ def save_profile():
         }
         es_instance.update(index='user_profiles', id=res["hits"]["hits"][0]["_id"], body={"doc": body})
     res = es_instance.search(index=INDEX_PROFILES_NAME, body={"query": {"match": {"profile_ID": session['username']}}})
-    print(res)
     # Redirect to the user's profile page
     return redirect(url_for('profile', username=session['username']))
     
@@ -295,7 +292,7 @@ def document(filename):
 
     # Extract content from results
     content = results["hits"]["hits"][0]['_source']['content']
-    
+    print(f'content file length = {len(content.split())}')
     return render_template('document.html', filename=filename, content=content)
 
 @app.route("/update_user_data", methods=["POST"])
@@ -306,6 +303,7 @@ def update_user_data():
 
     filename = request.form.get("filename")
     duration = int(request.form.get("duration"))
+    print(f'update user data - filename = {filename} duration = {duration}')
 
     # check if duration is greater than 5 seconds
     if duration > 5000:
