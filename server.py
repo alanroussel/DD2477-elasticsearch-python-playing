@@ -162,8 +162,7 @@ def home():
 
     
     if request.method == 'POST':
-        profile = get_profile(session['username'])
-        profile_results_map = get_documents_from_profile(profile['hits']['hits'][0]['_source'])
+        
         
         search_query = request.form['search']
         global curr_query # i dont understand 
@@ -172,43 +171,43 @@ def home():
         # get documents given the query of the user
         results_from_engine_index = search_documents_in_index(search_query, size=1000) # get top 1000
         document_names = [hit['_source']['filename'] for hit in results_from_engine_index['hits']['hits']]
-
+        results = results_from_engine_index['hits']['hits']
+        
         # get documents given the past queries of the user
         results_from_user_past_queries = get_documents_from_past_queries(username=session['username'], terms=search_query)
+        print(results_from_user_past_queries)
         
-        
-        results_with_boost = results_from_engine_index['hits']['hits']
-        if results_from_user_past_queries['hits']['total']['value'] > 0:
-            hit = results_from_user_past_queries['hits']['hits'][0]['_source']
+        # get documents given the profile of the user 
+        profile = get_profile(session['username'])
+        results_from_profile_hashmap = get_documents_from_profile(profile['hits']['hits'][0]['_source'])
 
+        ## boost results with results from the past search of the user
+        if results_from_user_past_queries['hits']['total']['value'] > 0:
             doc_counts = results_from_user_past_queries['hits']['hits'][0]['_source']['doc_counts']
 
-            # results_with_boost = results['hits']['hits']
-            for result in results_with_boost:
+            for result in results:
                 if result['_source']['filename'] in doc_counts:
                     # Boost score
                     doc_count = doc_counts[result['_source']['filename']]
                     result['_score'] += get_boost(doc_count)
             
-            results_with_boost = sorted(results_with_boost, key=lambda x: x['_score'], reverse=True)
+            results = sorted(results, key=lambda x: x['_score'], reverse=True)
         
         # Boost scores of documents that are relevant according to the user's interests (profile)
-        final_results = []
-        for i, result in enumerate(results_with_boost):
+        
+        for i, result in enumerate(results):
             
-            if i >= 100: # Only check for the top-100
+            if i >= 100: # Only check for the top-100, why ? 
                 break
 
             filename = result['_source']['filename']
-            if filename in profile_results_map:
+            if filename in results_from_profile_hashmap:
                 
-                result['_score'] += profile_results_map[filename]
+                result['_score'] += results_from_profile_hashmap[filename]
                 
-            final_results.append(result)
-        
-        final_results = sorted(final_results, key=lambda x: x['_score'], reverse=True) # Not sure if this is necessary
+        results = sorted(results, key=lambda x: x['_score'], reverse=True)
 
-        return render_template('search_results.html', search_query=search_query, document_names=document_names, results=results_with_boost)
+        return render_template('search_results.html', search_query=search_query, document_names=document_names, results=results)
 
     if 'logout' in request.args:
         session.clear()
