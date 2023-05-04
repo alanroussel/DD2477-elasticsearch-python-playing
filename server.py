@@ -2,6 +2,7 @@ import datetime
 import random
 import time
 import numpy as np
+import sqlite3
 
 from flask import Flask, render_template, request, redirect, url_for, session
 from elasticsearch import Elasticsearch
@@ -137,6 +138,17 @@ def get_boost(count):
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    # cursor.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT, password TEXT)')
+    cursor.execute('DROP TABLE IF EXISTS users')
+    cursor.execute('CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, password TEXT)')
+
+    for username in USERNAMES:
+        cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, PASSWORDS[username]))
+        conn.commit()
+    conn.close()
+
     if request.method == 'POST':
         # Check credentials and redirect to home page if successful
         if request.form['username'] in USERNAMES and request.form['password'] == PASSWORDS[request.form['username']]:
@@ -150,6 +162,29 @@ def login():
             return render_template('login.html', error='Invalid credentials')
     else:
         return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        # Add new user to PASSWORDS dictionary
+        if username in PASSWORDS:
+            return render_template('register.html', error='Username already taken')
+        else:
+            USERNAMES.append(username)
+            PASSWORDS[username] = password
+            conn = sqlite3.connect('users.db')
+            cursor = conn.cursor()
+            cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
+            conn.commit()
+            conn.close()
+            # create_user_index(username)
+            # Why is this line commented? Is it normal?
+            return redirect(url_for('home'))
+    else:
+        return render_template('register.html')
 
 @app.route('/home', methods=['GET', 'POST'])
 def home():
