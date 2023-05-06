@@ -2,3 +2,4 @@
 __pycache__/credentials.cpython-310.pyc
 credentials
 __pycache__/server.cpython-310.pyc
+users.db

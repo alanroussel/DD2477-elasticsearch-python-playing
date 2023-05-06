@@ -27,6 +27,8 @@ PASSWORDS["user2"] = "pass2"
 
 # Global variable to keep track of the latest query entered by the user
 curr_query = ""
+start_time_tracked = None
+filename_tracked = None
 
 app.secret_key = 'supersecretkey'
 
@@ -328,71 +330,81 @@ def document(filename):
     # Extract content from results
     content = results["hits"]["hits"][0]['_source']['content']
     print(f'content file length = {len(content.split())}')
+    global start_time_tracked, filename_tracked
+    start_time_tracked = time.time()
+    filename_tracked = filename
     return render_template('document.html', filename=filename, content=content)
 
-@app.route("/update_user_data", methods=["POST"])
+@app.route("/update_user_data")
 def update_user_data():
-    
+    print("back to home")
     username = session['username']
     index_name = get_user_index_name(username)
 
-    filename = request.form.get("filename")
-    duration = int(request.form.get("duration"))
-    print(f'update user data - filename = {filename} duration = {duration}')
+    # filename = request.form.get("filename")
+    # duration = int(request.form.get("duration"))
+    global start_time_tracked, filename_tracked
+    if(start_time_tracked and filename_tracked):
+        duration = time.time() - start_time_tracked
+        filename = filename_tracked
+        print(f'update user data - filename = {filename} duration = {duration}')
 
-    # check if duration is greater than 5 seconds
-    if duration > 5000:
-        query = curr_query
-        
-        try:
-            # check if the query exists in the index
-            body = {
-                "query": {
-                    "match": {
-                        "query": query
-                    }
-                }
-            }
-
-            res = es_instance.search(index=index_name, body=body)
-            if res["hits"]["total"]["value"] > 0:
-                doc_counts = res["hits"]["hits"][0]["_source"]["doc_counts"]
-
-                # check if the filename exists in the hashmap
-                if filename in doc_counts:
-                    # increment the value                    
-                    doc_counts[filename] += 1
-                else:
-                    # create new entry with filename as key and 1 as value
-                    doc_counts[filename] = 1
-                # update the index
-                es_instance.update(index=index_name, id=res["hits"]["hits"][0]["_id"], body={"doc": {"doc_counts": doc_counts}})
-            else:
-                
+        # check if duration is greater than 5 seconds
+        if duration > 3:
+            query = curr_query
             
-                es_instance.index(
-                    index=index_name, 
-                    body={
-                        "query": curr_query,
-                        "doc_counts": {
-                            filename: 1
+            try:
+                # check if the query exists in the index
+                body = {
+                    "query": {
+                        "match": {
+                            "query": query
                         }
                     }
-                )
+                }
+
+                res = es_instance.search(index=index_name, body=body)
+                if res["hits"]["total"]["value"] > 0:
+                    doc_counts = res["hits"]["hits"][0]["_source"]["doc_counts"]
+
+                    # check if the filename exists in the hashmap
+                    if filename in doc_counts:
+                        # increment the value                    
+                        doc_counts[filename] += 1
+                    else:
+                        # create new entry with filename as key and 1 as value
+                        doc_counts[filename] = 1
+                    # update the index
+                    es_instance.update(index=index_name, id=res["hits"]["hits"][0]["_id"], body={"doc": {"doc_counts": doc_counts}})
+                else:
+                    
                 
+                    es_instance.index(
+                        index=index_name, 
+                        body={
+                            "query": curr_query,
+                            "doc_counts": {
+                                filename: 1
+                            }
+                        }
+                    )
+                    
 
 
-        except NotFoundError:
-            es_instance.index(
-                    index=index_name, 
-                    body={
-                        "query": curr_query,
-                        "doc_counts": {}
-                    }
-                )
-            print("New query-entry created")
-    
-    return "OK"
+            except NotFoundError:
+                es_instance.index(
+                        index=index_name, 
+                        body={
+                            "query": curr_query,
+                            "doc_counts": {}
+                        }
+                    )
+                print("New query-entry created")
+    print("reset")
+    start_time_tracked = None
+    filename_tracked = None
+    return redirect("/home")
+
 
 
 

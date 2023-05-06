@@ -38,29 +38,14 @@
   <body>
     <h1>{{ filename }}</h1>
     <pre>{{ content }}</pre>
-    <a href="{{ url_for('home') }}">Back to search results</a>
+    <a href="{{ url_for('home') }}">home not tracked</a>
+    <a href="{{ url_for('update_user_data') }}">home tracked</a>
     
 
 
   </body>
   <script>
-    var startTime = Date.now();
-    var filename = "{{ filename }}";
-
-    
-
-
-    
-    window.onbeforeunload = function() {
-      var endTime = Date.now();
-      var duration = endTime - startTime;
-      var xhr = new XMLHttpRequest();
-      xhr.open("POST", "/update_user_data", true);
-      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      xhr.send("filename=" + filename + "&duration=" + duration);
-      
-
-    };
+    console.log(filename)
   </script>
   
 </html>
