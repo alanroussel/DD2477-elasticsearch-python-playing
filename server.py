@@ -29,6 +29,7 @@ PASSWORDS["user2"] = "pass2"
 curr_query = ""
 start_time_tracked = None
 filename_tracked = None
+length_of_doc = None
 
 app.secret_key = 'supersecretkey'
 
@@ -140,6 +141,7 @@ def get_boost(count):
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
+    print("oui")
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
     # cursor.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT, password TEXT)')
@@ -199,8 +201,7 @@ def home():
 
     
     if request.method == 'POST':
-        
-        
+        print("POST", request.form)
         search_query = request.form['search']
         global curr_query # i dont understand 
         curr_query = search_query
@@ -243,7 +244,7 @@ def home():
                 
         results = sorted(results, key=lambda x: x['_score'], reverse=True)
 
-        return render_template('search_results.html', search_query=search_query, document_names=document_names, results=results)
+        return render_template('search_results.html', search_query=search_query,results=results)
 
     if 'logout' in request.args:
         session.clear()
@@ -252,7 +253,7 @@ def home():
     if 'logout' in request.form:
         session.clear()
         return redirect(url_for('login'))
-
+        
     return render_template('home.html', username=session['username'])
 
 @app.route('/edit_profile')
@@ -330,27 +331,33 @@ def document(filename):
     # Extract content from results
     content = results["hits"]["hits"][0]['_source']['content']
     print(f'content file length = {len(content.split())}')
-    global start_time_tracked, filename_tracked
+    global start_time_tracked, filename_tracked, length_of_doc
     start_time_tracked = time.time()
     filename_tracked = filename
+    length_of_doc = len(content.split())
     return render_template('document.html', filename=filename, content=content)
 
 @app.route("/update_user_data")
 def update_user_data():
-    print("back to home")
+    print("update user data")
     username = session['username']
     index_name = get_user_index_name(username)
 
-    # filename = request.form.get("filename")
-    # duration = int(request.form.get("duration"))
-    global start_time_tracked, filename_tracked
-    if(start_time_tracked and filename_tracked):
+    global start_time_tracked, filename_tracked, length_of_doc
+    if(start_time_tracked and filename_tracked and length_of_doc):
         duration = time.time() - start_time_tracked
         filename = filename_tracked
         print(f'update user data - filename = {filename} duration = {duration}')
 
-        # check if duration is greater than 5 seconds
-        if duration > 3:
+        stayed_enough_time = False
+        if(length_of_doc<100 and duration > 3):
+            stayed_enough_time = True
+        if(length_of_doc>=100 and duration > 5):
+            stayed_enough_time = True
+        
+        # check if duration is greater than 3 seconds
+        if stayed_enough_time:
+            
             query = curr_query
             
             try:
@@ -400,11 +407,11 @@ def update_user_data():
                         }
                     )
                 print("New query-entry created")
-    print("reset")
+    print("tracking reset")
     start_time_tracked = None
     filename_tracked = None
+    length_of_doc = None
     return redirect("/home")
-
 
 
 

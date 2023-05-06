@@ -32,7 +32,7 @@
   </head>
   <body>
     <div class="text-end">
-      <a href="{{ url_for('home', logout=1) }}" onclick="return confirm('Are you sure you want to log out?');">Log out</a>
+      <a href="{{ url_for('home', logout=1) }}" onclick="return confirm('Are you sure you want to log out?');"><button>Log out</button> </a>
     </div>
     <div>
       <a href="{{ url_for('profile', username=username) }}"><button>Go to Profile</button></a>
@@ -45,14 +45,15 @@
         <button type="submit">Search</button>
       </div>
     </form>
-    {% if document_names %}
+    <!-- following code is useless -->
+    <!-- {% if document_names %}
       <h2>Search Results for "{{ search_query }}"</h2>
       <ul>
         {% for document_name in document_names %}
           <li><a href="{{ url_for('document', filename=document_name) }}">{{ document_name }}</a></li>
         {% endfor %}
       </ul>
-    {% endif %}
+    {% endif %} --> 
     
   </body>
 </html>

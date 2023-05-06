@@ -38,14 +38,6 @@
   <body>
     <h1>{{ filename }}</h1>
     <pre>{{ content }}</pre>
-    <a href="{{ url_for('home') }}">home not tracked</a>
-    <a href="{{ url_for('update_user_data') }}">home tracked</a>
-    
-
-
-  </body>
-  <script>
-    console.log(filename)
-  </script>
-  
+    <a href="{{ url_for('update_user_data') }}"><button>Home Page</button></a>
+  </body>  
 </html>
