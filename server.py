@@ -1,5 +1,3 @@
-import datetime
-import random
 import time
 import numpy as np
 import sqlite3
@@ -141,7 +139,6 @@ def get_boost(count):
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    print("oui")
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
     # cursor.execute('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT, password TEXT)')
@@ -216,7 +213,10 @@ def home():
         
         # get documents given the profile of the user 
         profile = get_profile(session['username'])
-        results_from_profile_hashmap = get_documents_from_profile(profile['hits']['hits'][0]['_source'])
+        try:
+            results_from_profile_hashmap = get_documents_from_profile(profile['hits']['hits'][0]['_source'])
+        except:
+            results_from_profile_hashmap = False
 
         ## boost results with results from the past search of the user
         if results_from_user_past_queries['hits']['total']['value'] > 0:
@@ -230,19 +230,19 @@ def home():
             
             results = sorted(results, key=lambda x: x['_score'], reverse=True)
         
-        # Boost scores of documents that are relevant according to the user's interests (profile)
-        
-        for i, result in enumerate(results):
-            
-            if i >= 100: # Only check for the top-100, why ? 
-                break
+        # If profile contains keywork, boost scores of documents that are relevant according to the user's interests (profile)
+        if(results_from_profile_hashmap):
+            for i, result in enumerate(results):
+                
+                if i >= 100: # Only check for the top-100, why ? 
+                    break
 
-            filename = result['_source']['filename']
-            if filename in results_from_profile_hashmap:
-                
-                result['_score'] += results_from_profile_hashmap[filename]
-                
-        results = sorted(results, key=lambda x: x['_score'], reverse=True)
+                filename = result['_source']['filename']
+                if filename in results_from_profile_hashmap:
+                    
+                    result['_score'] += results_from_profile_hashmap[filename]
+                    
+            results = sorted(results, key=lambda x: x['_score'], reverse=True)
 
         return render_template('search_results.html', search_query=search_query,results=results)
 
