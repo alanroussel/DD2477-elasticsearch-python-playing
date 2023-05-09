@@ -8,7 +8,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from elasticsearch import Elasticsearch
 from elasticsearch import NotFoundError
 from credentials import get_es_password_and_credentials_path
-password, ca_certs = get_es_password_and_credentials_path('./credentials/')
+password, ca_certs = get_es_password_and_credentials_path()
 
 es_instance = Elasticsearch('https://localhost:9200', ca_certs=ca_certs, basic_auth=("elastic", password))
 app = Flask(__name__, template_folder='./Website/template_folder')

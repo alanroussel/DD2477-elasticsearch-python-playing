@@ -1,5 +1,6 @@
 .DS_Store
-__pycache__/credentials.cpython-310.pyc
 credentials
-__pycache__/server.cpython-310.pyc
+__pycache__/
 users.db
+davisWiki/
+index.py.5443cb1a59096b223a578ebdc1ef33cc.tmp
