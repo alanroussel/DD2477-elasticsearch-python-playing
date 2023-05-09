@@ -1,0 +1,247 @@
+sports:
+Rank	Document Name	Score   Relevance(sports) Relevance(golf)
+1	Sports.f	7.494046    yes no
+2	KDVS_Sports.f	7.4129105   yes no
+3	Sports_Medicine.f	7.408081    yes no
+4	Sutter_Medical_Group_Sports_Medicine.f	7.3842535   no  no
+5	UC_Davis_Sports_Medicine_and_Sports_Performance.f	7.194739    yes no
+6	Sports_Chat.f	7.1687555   yes no
+7	Sportclips.f	7.0868554   no  no
+8	5K_Run_for_Recreation.f	6.9668617   yes no
+9	Massimo_Testa.f	6.95414 no  no
+10	Move_to_Division_I.f	6.9191036   yes yes
+11	Davis_Shooting_Sports.f	6.8740997   yes no
+12	Inner_Tube_Water_Polo.f	6.8666635   yes no
+13	Nugget_Fields.f	6.813067    no  no
+14	Soccer.f	6.8055396   yes no
+15	Sports2Kids.f	6.713802    yes no
+16	Intramural_Fields.f	6.709057    yes no
+17	Roller_Hockey.f	6.6724415   yes no
+18	AmberShipherd.f	6.6592007   no  no
+19	UCD_Roller_Hockey.f	6.6592007   yes no
+20	Goalgetters_Indoor_Soccer.f	6.632231    yes no
+
+Precision = (number of relevant documents retrieved) / (total number of documents retrieved)
+          = 15 / 20 = 0.68
+Recall = (number of relevant documents retrieved) / (total number of relevant documents)
+       = 15 / 100 = 0.15
+
+fishing gear shops:
+Rank	Document Name	Score   Relevance
+1	Scuba_Diving.f	14.9890995  yes
+2	Green_Sunfish.f	14.466606   no
+3	Big_5_Sporting_Goods.f	14.448014   yes
+4	Fishing.f	13.074654   yes
+5	27.f	12.817142   yes
+6	Climbing.f	12.759415   no
+7	Bicycles.f	12.507982   no
+8	Davis_Mobile_Bicycle_Repair.f	12.38764    no
+9	Aggie_Scuba.f	11.41637    no
+10	Fixed_Gear_Bicycles.f	11.073439   no
+11	2007_-_2008_Reviews.f	10.8994465  no
+12	LoganSchwab.f	10.2450695  no
+13	Pre-2010_Reviews.f	9.389505    no
+14	Old_Guys_at_the_MU.f	9.334158    no
+15	Sacramento_Tech_Exchange.f	9.125751    no
+16	DOERS.f	9.108195    no (maybe yes)
+17	Longlife_Fishing.f	9.08041 no
+18	Soccer_%26_Lifestyle.f	9.072685    no
+19	Central_Coast.f	8.969291    no
+20	Equipment_Swap.f	8.963341    no
+
+Precision = (number of relevant documents retrieved) / (total number of documents retrieved)
+          = 4 / 20 = 0.2
+Recall = (number of relevant documents retrieved) / (total number of relevant documents)
+       = 4 / 100 = 0.04
+
+
+zombie attack:
+Rank	Document Name	Score   Relevance
+1	Kearney_Hall.f	18.64134    yes
+2	Zombie_Walk.f	17.972775   yes
+3	Measure_Z.f	17.183662   yes
+4	Spirit_Halloween.f	17.13456    yes
+5	Zombie_Attack_Response_Guide.f	16.971544   yes
+6	Scream.f	16.432129   no
+7	Disasters.f	15.286183   yes
+8	Biological_Disasters.f	14.724125   yes
+9	JasonRifkind.f	11.803646   yes
+10	Zombies_Reclaim_the_Streets.f	11.778944   yes
+11	Lame_pages.f	11.710123   no
+12	Explore.f	11.3774185  yes
+13	EmilyMaas.f	9.841541    yes
+14	AliciaEdelman.f	9.765081    yes
+15	EvanGray.f	9.720381    no
+16	TaylorClark.f	9.529165    no
+17	StevenWong.f	9.494614    no
+18	Humans_vs._Zombies.f	9.336017   yes 
+19	AndrewCholerton.f	8.911223    no
+20	WilliamDavisJohnson.f	8.66548 no
+
+Precision = (number of relevant documents retrieved) / (total number of documents retrieved)
+          = 13 / 20 = 0.65
+Recall = (number of relevant documents retrieved) / (total number of relevant documents)
+       = 13 / 100 = 0.13
+
+
+
+amusement parks:
+Rank	Document Name	Score   Relevance
+1	Chess.f	13.769046   no
+2	California_State_University%2C_Chico.f	9.59045 no
+3	Arboretum_Waterway.f	8.851376    no
+4	Adventures_Outside_of_Davis.f	8.283049 yes
+5	Parks.f	8.03389 yes
+6	WWE.f	8.0266285   no
+7	Save_the_Parks.f	8.020614    no
+8	Robert_Arneson_Park.f	7.8166523  yes 
+9	Adopt-A-Park.f	7.7853074   no
+10	Wildhorse_Park.f	7.7518826   yes
+11	Dinosaur_Park.f	7.7164345   yes
+12	Park.f	7.5242205   no
+13	Village_Homes_Playground.f	7.5242205   no
+14	East_Putah_Creek_Park.f	7.454327    no
+15	Rosecreek_Greenbelt_Play_Area.f	7.454327    yes
+16	Pioneer_Park.f	7.4327703   no
+17	Southfield_Greenbelt_Play_Area.f	7.425586    yes
+18	La_Playa_Park.f	7.357505    yes
+19	Pirate_Park.f	7.301717    yes
+20	Dog_Parks.f	7.2955217   no
+
+Precision = (number of relevant documents retrieved) / (total number of documents retrieved)
+          = 9 / 20 - 0.45
+Recall = (number of relevant documents retrieved) / (total number of relevant documents)
+       = 9 / 100 = 0.09
+
+
+Evaluating the effect of profile boosting (PB)
+sports (the first three are different)L:
+Rank	Document Name	Score Relevance(golf)
+1	Frisbee.f	8.6559947
+2	UC_Davis_Athletics.f	8.181113250000001
+3	West_Coast_AAU_Junior_Olympic_Games.f	7.686104075
+4	Sports.f	7.494046
+5	KDVS_Sports.f	7.4129105
+6	Sports_Medicine.f	7.408081
+7	Sutter_Medical_Group_Sports_Medicine.f	7.3842535
+8	UC_Davis_Sports_Medicine_and_Sports_Performance.f	7.194739
+9	Sports_Chat.f	7.1687555
+10	Sportclips.f	7.0868554
+11	5K_Run_for_Recreation.f	6.9668617
+12	Massimo_Testa.f	6.95414
+13	Move_to_Division_I.f	6.9191036  yes ??strange
+14	Davis_Shooting_Sports.f	6.8740997
+15	Inner_Tube_Water_Polo.f	6.8666635
+16	Nugget_Fields.f	6.813067
+17	Soccer.f	6.8055396
+18	Sports2Kids.f	6.713802
+19	Intramural_Fields.f	6.709057
+20	Roller_Hockey.f	6.6724415
+
+
+fishing hear shops:
+not much different
+Rank of Parks.f changes from 60 to 13 (maybe because of "art")
+
+zombie attack and amusement parks:
+no change
+
+
+
+Evaluating the effect of click boosting (CB):
+
+sports:
+
+Rank	Document Name	Score
+1	Sports.f	9.494046
+2	KDVS_Sports.f	9.412910499999999
+3	Sports_Medicine.f	9.408081
+4	UC_Davis_Sports_Medicine_and_Sports_Performance.f	9.194739
+5	Sports_Chat.f	9.1687555
+6	5K_Run_for_Recreation.f	8.966861699999999
+7	Move_to_Division_I.f	8.9191036
+8	Davis_Shooting_Sports.f	8.8740997
+9	Inner_Tube_Water_Polo.f	8.8666635
+10	Soccer.f	8.8055396
+11	Sports2Kids.f	8.713802000000001
+12	Intramural_Fields.f	8.709057
+13	Roller_Hockey.f	8.6724415
+14	UCD_Roller_Hockey.f	8.6592007
+15	Goalgetters_Indoor_Soccer.f	8.632231
+16	Sutter_Medical_Group_Sports_Medicine.f	7.3842535
+17	Sportclips.f	7.0868554
+18	Massimo_Testa.f	6.95414
+19	Nugget_Fields.f	6.813067
+20	AmberShipherd.f	6.6592007
+
+
+fishing gear shops:
+Rank	Document Name	Score
+1	Scuba_Diving.f	16.989099500000002
+2	Big_5_Sporting_Goods.f	16.448014
+3	Fishing.f	15.074654
+4	27.f	14.817142
+5	Green_Sunfish.f	14.466606
+6	Climbing.f	12.759415
+7	Bicycles.f	12.507982
+8	Davis_Mobile_Bicycle_Repair.f	12.38764
+9	Aggie_Scuba.f	11.41637
+10	Fixed_Gear_Bicycles.f	11.073439
+11	2007_-_2008_Reviews.f	10.8994465
+12	LoganSchwab.f	10.2450695
+13	Pre-2010_Reviews.f	9.389505
+14	Old_Guys_at_the_MU.f	9.334158
+15	Sacramento_Tech_Exchange.f	9.125751
+16	DOERS.f	9.108195
+17	Longlife_Fishing.f	9.08041
+18	Soccer_%26_Lifestyle.f	9.072685
+19	Central_Coast.f	8.969291
+20	Equipment_Swap.f	8.963341
+
+
+zombie attack:
+Rank	Document Name	Score
+1	Kearney_Hall.f	20.64134
+2	Zombie_Walk.f	19.972775
+3	Measure_Z.f	19.183662
+4	Spirit_Halloween.f	19.13456
+5	Zombie_Attack_Response_Guide.f	18.971544
+6	Disasters.f	17.286183
+7	Biological_Disasters.f	16.724125
+8	Scream.f	16.432129
+9	JasonRifkind.f	13.803646
+10	Zombies_Reclaim_the_Streets.f	13.778944
+11	Explore.f	13.3774185
+12	EmilyMaas.f	11.841541
+13	AliciaEdelman.f	11.765081
+14	Lame_pages.f	11.710123
+15	Humans_vs._Zombies.f	11.336017
+16	EvanGray.f	9.720381
+17	TaylorClark.f	9.529165
+18	StevenWong.f	9.494614
+19	AndrewCholerton.f	8.911223
+20	WilliamDavisJohnson.f	8.66548
+
+
+amusement parks
+Rank	Document Name	Score
+1	Chess.f	13.769046
+2	Adventures_Outside_of_Davis.f	10.283049
+3	Parks.f	10.03389
+4	Robert_Arneson_Park.f	9.816652300000001
+5	Wildhorse_Park.f	9.7518826
+6	Dinosaur_Park.f	9.7164345
+7	California_State_University%2C_Chico.f	9.59045
+8	Rosecreek_Greenbelt_Play_Area.f	9.454327
+9	Southfield_Greenbelt_Play_Area.f	9.425586
+10	La_Playa_Park.f	9.357505
+11	Pirate_Park.f	9.301717
+12	Arboretum_Waterway.f	8.851376
+13	WWE.f	8.0266285
+14	Save_the_Parks.f	8.020614
+15	Adopt-A-Park.f	7.7853074
+16	Park.f	7.5242205
+17	Village_Homes_Playground.f	7.5242205
+18	East_Putah_Creek_Park.f	7.454327
+19	Pioneer_Park.f	7.4327703
+20	Dog_Parks.f	7.2955217
