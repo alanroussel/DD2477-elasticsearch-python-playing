@@ -15,7 +15,7 @@ During launching, copy your personal Elasticsearch password as it will be needed
 Clone the project
 
 ```bash
-git clone https://github.com/alanroussel/DD2477-elasticsearch-python-playing
+git clone https://github.com/alanroussel/Personalized-Search-Engine-Project
 ```
 
 Go to the project directory
