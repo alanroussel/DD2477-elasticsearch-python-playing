@@ -43,8 +43,10 @@ filename_tracked = None
 length_of_doc = None
 
 # Variables used to alter the ranking 
-ALPHA = 2 # profile boosting
-BETA = 0.25 # click boosting
+ALPHA = 2 # click boosting
+BETA = 0.25 # profile boosting
+
+
 
 
 ################################################
@@ -246,9 +248,10 @@ def home():
         results_from_user_past_queries = get_documents_from_past_queries(username=session['username'], terms=search_query)
         
         # get documents given the profile of the user 
-        profile = get_profile(session['username'])
+        
         try:
-            results_from_profile_hashmap = get_documents_from_profile(profile['hits']['hits'][0]['_source'])
+            profile = get_profile(session['username']) # can throw error if the profile is not indexed yet 
+            results_from_profile_hashmap = get_documents_from_profile(profile['hits']['hits'][0]['_source']) # can throw error if the profile is currently empty
         except:
             results_from_profile_hashmap = False
 
