@@ -395,9 +395,7 @@ def update_user_data():
         filename = filename_tracked
 
         stayed_enough_time = False
-        if(length_of_doc<100 and duration > 3):
-            stayed_enough_time = True
-        if(length_of_doc>=100 and duration > 5):
+        if(duration > 3):
             stayed_enough_time = True
         
         # check if duration is enough
