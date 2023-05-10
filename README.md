@@ -15,36 +15,34 @@ During launching, copy your personal Elasticsearch password as it will be needed
 Clone the project
 
 ```bash
-  git clone https://github.com/alanroussel/DD2477-elasticsearch-python-playing
+git clone https://github.com/alanroussel/DD2477-elasticsearch-python-playing
 ```
 
 Go to the project directory
 
 ```bash
-  cd DD2477-elasticsearch-python-playing
+cd DD2477-elasticsearch-python-playing
 ```
 
-Paste your password inside `credentials/config.json` and place `http_ca.crt` inside `credentials` folder.
-
-Unzip `davisWiki.tar`
-
-Install packages and dependencies, for instance with conda
+Install needed dependencies and packages, for instance with conda.
 
 ```bash
-  conda env create -f environment.yml
-  conda activate elasticsearch_env
+conda env create -f environment.yml
+conda activate elasticsearch_env
 ```
 
-Index the davisWiki database into Elasticsearch. The indexing should take between 30 seconds and 2 minutes.
+Unzip `davisWiki.tar`.
+
+Before indexing davisWiki dataset into Elasticsearch, we need to ensure a secure connection between this application and your elasticsearch instance. Therefore, enter `credentials` folder, paste your password inside already existing `config.json` and drop `http_ca.crt` file.You should be able to index the dataset. It should take between 30 seconds and 2 minutes.
 
 ```bash
-  python index.py
+python index.py
 ```
 
 Start the server
 
 ```bash
-  python server.py
+python server.py
 ```
 
 Go to [http://localhost:5000](http://localhost:5000) 🎉!

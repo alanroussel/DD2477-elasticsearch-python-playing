@@ -1,5 +1,5 @@
 .DS_Store
-credentials
+credentials/http_ca.crt
 __pycache__/
 users.db
 davisWiki/

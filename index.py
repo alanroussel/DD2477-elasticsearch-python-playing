@@ -4,10 +4,11 @@ from tqdm import tqdm
 
 from credentials import get_es_password_and_credentials_path
 
+# Load password and certificate, mandatory to discuss with elasticsearch API
 password, ca_certs = get_es_password_and_credentials_path()
-
 es_instance = Elasticsearch('https://localhost:9200', ca_certs=ca_certs, basic_auth=("elastic", password))
-# Define the index and mapping
+
+# Structure of the search engine index : a `filename` for the name of the document, and a `content` for its content
 INDEX_NAME = 'engine'
 mappings = {
     "mappings": {
@@ -39,5 +40,6 @@ for filename in tqdm(files_to_read, "indexing the file into your elasticsearch i
 
         # Index the document in ElasticSearch
         es_instance.index(index=INDEX_NAME, document=doc)
-        
+
+# Done 
 print("Files indexed successfully!")
